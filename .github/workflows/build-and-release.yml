@@ -1,0 +1,88 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOCKERHUB_REPO: joshdixon/flekt-wpf-api
+
+jobs:
+  build-api:
+    name: Build & Push API to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/Flekt.Wpf.Api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.DOCKERHUB_REPO }}:latest
+
+  build-wpf:
+    name: Build WPF App
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Publish WPF app (self-contained)
+        run: >
+          dotnet publish src/Flekt.Wpf.App/Flekt.Wpf.App.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -o publish/wpf
+
+      - name: Copy configs
+        run: Copy-Item -Recurse configs publish/wpf/configs
+        shell: pwsh
+
+      - name: Create zip
+        run: Compress-Archive -Path publish/wpf/* -DestinationPath Flekt.Wpf.App-win-x64.zip
+        shell: pwsh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flekt.Wpf.App-win-x64
+          path: Flekt.Wpf.App-win-x64.zip
+
+  release:
+    name: Create GitHub Release
+    needs: [build-api, build-wpf]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download WPF artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Flekt.Wpf.App-win-x64
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Flekt.Wpf.App-win-x64.zip
+          generate_release_notes: true

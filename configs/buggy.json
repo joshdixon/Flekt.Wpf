@@ -1,0 +1,19 @@
+{
+  "LoginDelayMs": 300,
+  "StockLoadDelayMs": 800,
+  "InvoiceProcessDelayMs": 2000,
+  "NavigationDelayMs": 150,
+  "DocketLoadDelayMs": 500,
+  "DocketAllocateDelayMs": 800,
+  "DocketConfirmDelayMs": 600,
+  "StockAdjustDelayMs": 300,
+  "LoginFailsFirstAttempt": true,
+  "WrongInvoiceTotals": true,
+  "MissingStockColumn": true,
+  "ShiftedLoginButton": true,
+  "ShowRandomErrorDialog": true,
+  "PhantomInvoiceRow": true,
+  "Theme": "default",
+  "FontScale": 1.0,
+  "AccentColor": "#0078D4"
+}

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Flekt.Wpf.Api/Flekt.Wpf.Api.csproj" />
+    <Project Path="src/Flekt.Wpf.App/Flekt.Wpf.App.csproj" />
+    <Project Path="src/Flekt.Wpf.Shared/Flekt.Wpf.Shared.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

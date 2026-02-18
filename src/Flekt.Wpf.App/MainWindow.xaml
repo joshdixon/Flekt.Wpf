@@ -1,0 +1,106 @@
+<Window x:Class="Flekt.Wpf.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:Flekt.Wpf.App.Views"
+        xmlns:converters="clr-namespace:Flekt.Wpf.App.Converters"
+        Title="Flekt Warehouse Management" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+
+        <Style x:Key="RibbonButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0E0E0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Ribbon-style toolbar -->
+        <Border Grid.Row="0" Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="0,0,0,1" Padding="0">
+            <StackPanel>
+                <!-- Tab headers -->
+                <Border Background="#0078D4" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="WAREHOUSE" Foreground="White" FontSize="11" FontWeight="Bold"
+                                   Margin="0,0,20,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="PROCESSING" Foreground="#B0D4F1" FontSize="11" FontWeight="Bold"
+                                   Margin="0,0,20,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="SYSTEM" Foreground="#B0D4F1" FontSize="11" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Ribbon buttons -->
+                <StackPanel Orientation="Horizontal" Margin="8,4">
+                    <!-- Warehouse group -->
+                    <Border BorderBrush="#DDD" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="📦 Stock" Style="{StaticResource RibbonButtonStyle}"
+                                    Command="{Binding NavigateToStockCommand}"/>
+                            <Button Content="📤 Pick Dockets" Style="{StaticResource RibbonButtonStyle}"
+                                    Command="{Binding NavigateToPickDocketsCommand}"/>
+                            <Button Content="📥 Put Dockets" Style="{StaticResource RibbonButtonStyle}"
+                                    Command="{Binding NavigateToPutDocketsCommand}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Processing group -->
+                    <Border BorderBrush="#DDD" BorderThickness="0,0,1,0" Padding="0,0,8,0" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="🧾 Run Invoices" Style="{StaticResource RibbonButtonStyle}"
+                                    Command="{Binding NavigateToInvoicesCommand}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- System group -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="ℹ️ About" Style="{StaticResource RibbonButtonStyle}"
+                                Click="About_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Content area -->
+        <Grid Grid.Row="1">
+            <!-- Loading overlay for navigation -->
+            <ProgressBar IsIndeterminate="True" Height="3" VerticalAlignment="Top"
+                         Visibility="{Binding IsNavigating, Converter={StaticResource BoolToVis}}"/>
+
+            <ContentPresenter x:Name="ContentArea" Margin="0,4,0,0"/>
+        </Grid>
+
+        <!-- Status bar -->
+        <Border Grid.Row="2" Background="#F5F5F5" BorderBrush="#DDD" BorderThickness="0,1,0,0" Padding="10,5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding StatusText}" Foreground="#666" FontSize="11"/>
+                <TextBlock Grid.Column="1" Foreground="#666" FontSize="11" Margin="20,0">
+                    <Run Text="View: "/><Run Text="{Binding CurrentViewName, Mode=OneWay}" FontWeight="SemiBold"/>
+                </TextBlock>
+                <TextBlock Grid.Column="2" Foreground="#666" FontSize="11">
+                    <Run Text="User: "/><Run Text="{Binding CurrentUser, Mode=OneWay}" FontWeight="SemiBold"/>
+                </TextBlock>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

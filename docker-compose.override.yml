@@ -1,0 +1,7 @@
+services:
+  api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CHAOS_CONFIG_PATH=/app/configs/baseline.json
+    ports:
+      - "5100:8080"

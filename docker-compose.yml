@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/Flekt.Wpf.Api/Dockerfile
+    ports:
+      - "5100:8080"
+    volumes:
+      - ./configs:/app/configs
+    environment:
+      - CHAOS_CONFIG_PATH=/app/configs/baseline.json
