@@ -32,8 +32,8 @@ jobs:
           file: src/Flekt.Wpf.Api/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.version.outputs.VERSION }}
-            ${{ env.DOCKERHUB_REPO }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/flekt-wpf-api:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/flekt-wpf-api:latest
 
   build-wpf:
     name: Build WPF App
