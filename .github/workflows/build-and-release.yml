@@ -12,6 +12,8 @@ jobs:
   build-api:
     name: Build & Push API to Docker Hub
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v4
 
@@ -86,3 +88,18 @@ jobs:
         with:
           files: Flekt.Wpf.App-win-x64.zip
           generate_release_notes: true
+
+  flekt:
+    name: Flekt QA
+    needs: [build-api, release]
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+    steps:
+      - uses: flektco/action@master
+        with:
+          api-key: ${{ secrets.FLEKT_API_KEY }}
+          suite-id: ${{ vars.FLEKT_SUITE_ID }}
+          variables: |
+            wpf_artifact: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Flekt.Wpf.App-win-x64.zip
+            api_image: ${{ secrets.DOCKERHUB_USERNAME }}/flekt-wpf-api:${{ needs.build-api.outputs.version }}
