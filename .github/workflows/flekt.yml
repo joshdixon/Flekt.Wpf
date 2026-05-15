@@ -1,0 +1,15 @@
+name: Flekt
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  flekt:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: flektco/action@v0
+        with:
+          suite-id: demo-suite-1
+          api-url: https://api-dev.flekt.co
